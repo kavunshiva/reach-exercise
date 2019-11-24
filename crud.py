@@ -8,6 +8,14 @@ from websocket import message_queue
 
 @app.post('/object', response_model=ObjectIn)
 async def create_object(object: ObjectIn):
+    '''
+    Create an object in the database from a POST request and return a
+    representation of that object as a dict.
+
+    Keyword arguments:
+    object -- an instance of ObjectIn as converted from the body of an
+    HTTP POST request by the app decorator
+    '''
     query = objects.insert().values(
         email=object.email,
         phone_number=object.phone_number,
@@ -18,6 +26,15 @@ async def create_object(object: ObjectIn):
 
 @app.post('/alert', response_model=Alert)
 async def create_alert(alert: AlertIn):
+    '''
+    Create an alert in the database from a POST request,
+    associate that alert with its appropriate persisted objects,
+    and return a representation of that alert as a dict.
+
+    Keyword arguments:
+    alert -- an instance of AlertIn as converted from the body of an
+    HTTP POST request by the app decorator
+    '''
     object_ids = await get_object_ids(alert)
     new_alert_params = await insert_alert(alert, len(object_ids))
     new_alert_id = new_alert_params['id']
@@ -34,10 +51,10 @@ async def _trigger_any_error_messages(id: int, resource: str):
         )
     return None
 
-def _add_alert_to_websocket_queue(alert_params: dict, object_ids: List[int]):
+def _add_alert_to_websocket_queue(params: dict, object_ids: List[int]):
     global message_queue
     for object_id in object_ids:
         if not object_id in message_queue.keys():
-            message_queue[object_id] = [alert_params]
+            message_queue[object_id] = [params]
         else:
-            message_queue[object_id].append(alert_params)
+            message_queue[object_id].append(params)
