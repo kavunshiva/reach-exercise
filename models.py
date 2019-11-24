@@ -8,4 +8,10 @@ class ObjectIn(BaseModel):
 class AlertIn(BaseModel):
     text: str
     object_ids: List[int] = []
+    alert_all: bool = False
+
+class Alert(BaseModel):
+    id: int
+    text: str
     alert_all: bool
+    number_of_objects_receiving_alert: int
