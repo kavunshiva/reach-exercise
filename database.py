@@ -21,8 +21,16 @@ alerts = sqlalchemy.Table(
     metadata,
     sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
     sqlalchemy.Column('text', sqlalchemy.String),
-    sqlalchemy.Column('object_ids', sqlalchemy.ARRAY(sqlalchemy.Integer)),
     sqlalchemy.Column('alert_all', sqlalchemy.Boolean),
+    sqlalchemy.Column('number_of_objects_receiving_alert', sqlalchemy.Integer),
+)
+
+object_alerts = sqlalchemy.Table(
+    'object_alerts',
+    metadata,
+    sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True),
+    sqlalchemy.Column('object_id', sqlalchemy.Integer),
+    sqlalchemy.Column('alert_id', sqlalchemy.Integer),
 )
 
 engine = sqlalchemy.create_engine(DATABASE_URL)
