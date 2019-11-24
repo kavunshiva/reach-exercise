@@ -23,7 +23,7 @@ async def create_object(object: ObjectIn):
         phone_number=object.phone_number,
     )
     id = await database.execute(query)
-    await _trigger_any_error_messages(id, 'objects')
+    await _trigger_not_found_error_if_any(id, 'objects')
     return {**object.dict(), 'id': id}
 
 @app.post('/alert', response_model=Alert)
@@ -40,23 +40,15 @@ async def create_alert(alert: AlertIn):
     object_ids = await get_object_ids(alert)
     new_alert_params = await insert_alert(alert, len(object_ids))
     new_alert_id = new_alert_params['id']
-    await _trigger_any_error_messages(new_alert_id, 'alerts')
+    await _trigger_not_found_error_if_any(new_alert_id, 'alerts')
     await update_join_table(new_alert_id, object_ids)
     _add_alert_to_websocket_queue(new_alert_params, object_ids)
     return new_alert_params
 
 def _validate_incoming_params(object: ObjectIn):
     error_messages = []
-    email = object.email
-    phone_number = object.phone_number
-    if email and not re.match('\w+@\w+\.\w+', email):
-        error_messages.append(f'email ({email})')
-    digits = []
-    if phone_number:
-        for c in phone_number:
-            if re.match('\d', c): digits.append(c)
-    if len(digits) < 10:
-        error_messages.append(f'phone_number ({phone_number})')
+    _validate_email(object, error_messages)
+    _validate_phone_number(object, error_messages)
     if len(error_messages) > 0:
         error_string = ', '.join(error_messages)
         raise HTTPException(
@@ -65,7 +57,25 @@ def _validate_incoming_params(object: ObjectIn):
         )
     return True
 
-async def _trigger_any_error_messages(id: int, resource: str):
+def _validate_email(object: ObjectIn, error_messages: List[str]):
+    email = object.email
+    if email and not re.match('\w+@\w+\.\w+', email):
+        error_messages.append(f'email ({email})')
+        return False
+    return True
+
+def _validate_phone_number(object: ObjectIn, error_messages: List[str]):
+    phone_number = object.phone_number
+    digits = []
+    if phone_number:
+        for c in phone_number:
+            if re.match('\d', c): digits.append(c)
+    if len(digits) < 10:
+        error_messages.append(f'phone_number ({phone_number})')
+        return False
+    return True
+
+async def _trigger_not_found_error_if_any(id: int, resource: str):
     if id not in (await get_all_ids(resource)):
         raise HTTPException(
             status_code=404,
