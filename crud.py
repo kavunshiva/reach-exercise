@@ -1,4 +1,5 @@
 from typing import List
+import re
 
 from app import app
 from fastapi import HTTPException
@@ -16,6 +17,7 @@ async def create_object(object: ObjectIn):
     object -- an instance of ObjectIn as converted from the body of an
     HTTP POST request by the app decorator
     '''
+    _validate_incoming_params(object)
     query = objects.insert().values(
         email=object.email,
         phone_number=object.phone_number,
@@ -42,6 +44,26 @@ async def create_alert(alert: AlertIn):
     await update_join_table(new_alert_id, object_ids)
     _add_alert_to_websocket_queue(new_alert_params, object_ids)
     return new_alert_params
+
+def _validate_incoming_params(object: ObjectIn):
+    error_messages = []
+    email = object.email
+    phone_number = object.phone_number
+    if email and not re.match('\w+@\w+\.\w+', email):
+        error_messages.append(f'email ({email})')
+    digits = []
+    if phone_number:
+        for c in phone_number:
+            if re.match('\d', c): digits.append(c)
+    if len(digits) < 10:
+        error_messages.append(f'phone_number ({phone_number})')
+    if len(error_messages) > 0:
+        error_string = ', '.join(error_messages)
+        raise HTTPException(
+            status_code=400,
+            detail=f'The following params are invalid: {error_string}',
+        )
+    return True
 
 async def _trigger_any_error_messages(id: int, resource: str):
     if id not in (await get_all_ids(resource)):
