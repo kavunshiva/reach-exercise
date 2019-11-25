@@ -12,6 +12,12 @@ message_queue = {}
 
 @app.websocket('/inbox/{object_id}')
 async def websocket_endpoint(websocket: WebSocket, object_id: int):
+    '''
+    Opens a websocket connection, pushes all alerts associated with the
+    client's object_id to the client, then periodically checks for any
+    new alerts associated with the client's object_id and pushes those to
+    the client as they crop up.
+    '''
     await _open_connection(websocket, object_id)
     await _check_for_incoming_messages(websocket, object_id)
 
