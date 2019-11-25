@@ -79,7 +79,10 @@ When hitting the `objects` endpoint, try sending up some objects with an invalid
 
 Have fun.
 
-### TODO
+# Tests
+Run `./tests.py` from the `app` directory. (You may need to run `chmod +x tests.py` if your system whines about not having sufficient privileges.)
+
+# TODO
 - [x] store credentials
 - [x] add endpoints
   + [x] POST: /object
