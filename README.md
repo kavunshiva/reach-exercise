@@ -14,6 +14,4 @@ TODO:
 - [x] add docstrings
 - [ ] add docker config
 - [x] break code out into files
-
-nice to have:
-- [ ] validations
+- [x] validations
