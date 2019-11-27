@@ -45,7 +45,7 @@ If all goes well, a `200` status is returned indicating the `alerts` have succes
 On connection to this endpoint, all of the `alerts` associated with the `object_id` (through the `object_alerts` join table) are pushed to the client. As additional alerts intended for the `object` with the `object_id`, they are also pushed to the client.
 
 # Setup
-A `Dockerfile` and `docker-compose.yml` were created but are admittedly a bit rough around the edges. This app pulls in environment variables from a `.env` in its `app` directory while you'll have to make; it should look like the following:
+A `Dockerfile` and `docker-compose.yml` were created but are admittedly a bit rough around the edges. This app pulls in environment variables from a `.env` in its `app` directory which you'll have to make; it should look like the following:
 
 ```
 DB_USERNAME=<YOUR_DB_USERNAME>
