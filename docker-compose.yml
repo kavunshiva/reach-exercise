@@ -26,8 +26,6 @@ services:
       dockerfile: Dockerfile
     environment:
       - PORT=5057
-      - MODULE_NAME=main
-      - VARIABLE_NAME=app
       - DB_SERVER=db
       - DB_USERNAME=postgres
       - DB_PASSWORD=postgres

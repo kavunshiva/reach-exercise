@@ -7,4 +7,7 @@ COPY Pipfile.lock /app/Pipfile.lock
 
 RUN pipenv install --system --deploy --ignore-pipfile
 
-COPY ./app /app
+COPY . /app
+
+ENV VARIABLE_NAME=app
+ENV MODULE_NAME=main
