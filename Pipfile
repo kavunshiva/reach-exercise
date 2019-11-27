@@ -6,8 +6,8 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-dotenv = "*"
 databases = "*"
+python-dotenv = "*"
 
 [requires]
 python_version = "3.7"
