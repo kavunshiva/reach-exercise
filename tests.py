@@ -2,9 +2,11 @@
 # TODO: get test DB setup to allow for testing of valid requests
 
 import json
+
 from starlette.testclient import TestClient
-from database import *
-from crud import app
+
+from app.database import *
+from app.crud import app
 
 client = TestClient(app)
 

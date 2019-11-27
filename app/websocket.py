@@ -1,12 +1,11 @@
 import asyncio
 from fastapi.encoders import jsonable_encoder
-
 from starlette.responses import HTMLResponse
 from starlette.websockets import WebSocket
-from database import database, alerts
-from models import Alert
 
-from app import app
+from app.database import database, alerts
+from app.models import Alert
+from app.app import app
 
 message_queue = {}
 

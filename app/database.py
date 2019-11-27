@@ -1,10 +1,11 @@
 from typing import List
+
 import databases
 import sqlalchemy
 from fastapi.encoders import jsonable_encoder
 
-from app import app
-from models import AlertIn, Alert
+from app.app import app
+from app.models import AlertIn, Alert
 from settings import DATABASE_URL
 
 database = databases.Database(DATABASE_URL)
