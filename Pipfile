@@ -13,3 +13,8 @@ uvicorn = "*"
 
 [requires]
 python_version = "3.7"
+
+[scripts]
+compose-up = "docker-compose -f docker-compose.yml up --build"
+compose-down = "docker-compose -f docker-compose.yml up --build"
+server = "uvicorn main:app --reload"
