@@ -1,10 +1,5 @@
 version: '3'
 services:
-  reach_example_api:
-    image: myimage:latest
-    command: uvicorn api:app --host 0.0.0.0 --port 5057
-    ports:
-      - "5057:5057"
   db:
 #   Use the Docker Image postgres. This will pull the newest release.
     image: "postgres"
@@ -12,13 +7,29 @@ services:
     container_name: "reach_example_db"
 #   Setup the username, password, and database name. You can changes these values.
     environment:
-      - POSTGRES_USER=
-      - POSTGRES_PASSWORD=
-      - POSTGRES_DB=
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=pgdb
 #   Maps port 54320 (localhost) to port 5432 on the container. You can change the ports to fix your needs.
     ports:
-      - "54320:5432"
+      - "5432:5432"
 #   Set a volume some that database is not lost after shutting down the container.
 #   I used the name postgres-data but you can changed it to something else.
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
+
+  reach_example_api:
+    depends_on: 
+    - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - PORT=5057
+      - DB_SERVER=db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=pgdb
+    ports:
+      - "5057:5057"
+    restart: on-failure:10
